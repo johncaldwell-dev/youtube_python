@@ -4,6 +4,12 @@ from pytubefix.cli import on_progress
 from pytubefix import exceptions
 import os
 
+def select_video_or_audio(selection: str, url: str, path: str):
+    if selection == "video":
+        youtube_video_download(url, path)
+    if selection == "audio":
+        youtube_audio_download(url, path)
+
 def youtube_video_download(url: str, path: str):
     try:
         yt = YouTube(url, on_progress_callback = on_progress)
@@ -22,7 +28,6 @@ def youtube_audio_download(url: str, base: str):
         ys = yt.streams.filter(only_audio=True).first()
         out_file = ys.download(output_path='.')
         new_file = f'{base}\{yt.title}.mp3'
-        print(new_file)
         os.rename(out_file, new_file)
         print("\nDone!")
     except FileExistsError:
