@@ -1,7 +1,7 @@
 import customtkinter
 import youtube_downloader
 
-resolution = "600x300"
+resolution = "600x350"
 
 window = customtkinter.CTk()
 window.geometry(resolution)
@@ -31,6 +31,14 @@ cboselection = customtkinter.CTkComboBox(
 cboselection.set("Video")  # 👈 default selection
 cboselection.place(x=50, y=250)
 
+progress_label = customtkinter.CTkLabel(window, text="Progress: 0%")
+progress_label.place(x=50, y=280)
+
+progress_bar = customtkinter.CTkProgressBar(window, width=500)
+progress_bar.set(0)
+progress_bar.place(x=50, y=305)
+
+
 def download():
     selection = cboselection.get().lower()
     youtube_url = txtyoutube_url.get()
@@ -39,8 +47,13 @@ def download():
     youtube_downloader.select_video_or_audio(
         selection,
         youtube_url,
-        save_location
+        save_location,
+        progress_bar,
+        progress_label
     )
+
+    txtyoutube_url.delete(0, customtkinter.END)
+    txtsave_location.delete(0, customtkinter.END)
 
 btndownload = customtkinter.CTkButton(
     window,
