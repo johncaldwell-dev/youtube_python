@@ -1,8 +1,8 @@
-
+import os
+import re
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
 from pytubefix import exceptions
-import os
 from pytubefix import YouTube
 
 def select_video_or_audio(selection, url, path, progress_bar, progress_label):
@@ -18,10 +18,18 @@ def select_video_or_audio(selection, url, path, progress_bar, progress_label):
 
     if selection == "video":
         stream = yt.streams.get_highest_resolution()
+        stream.download(output_path=path)
     else:
         stream = yt.streams.filter(only_audio=True).first()
+        out_file = stream.download(output_path='.')
 
-    stream.download(output_path=path)
+        # Remove invalid filename characters
+        safe_title = re.sub(r'[\\/*?:"<>|]', "", yt.title)
+
+        new_file = os.path.join(path, f"{safe_title}.mp3")
+        os.rename(out_file, new_file)
+    
+    
 
     progress_label.configure(text="Download complete!")
 
